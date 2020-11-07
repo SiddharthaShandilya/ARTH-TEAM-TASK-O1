@@ -244,7 +244,6 @@ def docker():
     service()
     Rechoice()
  
-# ---------------->>>>>>>>>>>>>>>>>>   Here only by calling docker function the whole program will run
-
+# ---------------->>>>>>>>>>>>>>>>>>   Here only by calling docker function the whole program will ru
 
 docker()  #<<<<<<<----------- call docker() to start the program
