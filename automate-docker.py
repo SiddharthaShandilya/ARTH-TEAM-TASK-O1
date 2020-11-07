@@ -45,10 +45,10 @@ def service():
             elif(ch == "2"):
                 print("\n\tstopping docker")
                 os.system("systemctl stop docker")
-                print("\n\tThe docker is stoped")
+                print("\n\tThe docker is stopped")
                 dockerStart = 0
             elif(ch == "3"):
-                print("\n\t\tpresenting docker Details\n")
+                print("\n\t\tPresenting Docker Details\n")
                # os.system("systemctl status docker")
                 showDockerDetails(dockerStart)
             elif(ch == "4"):
@@ -59,8 +59,10 @@ def service():
                 dockerHostWebServer(dockerStart)
             elif(ch == "x"):
                 print("\n\t\tYou have chosen To exit")
-                exit()
+              
                 print("\n !!!! \t\tt\t\t\t\ EXITING THE SYSTEM  \t\t\tt\t !!!!")
+                
+                exit()
             else:
                 print("You have entered wrong choice")
 
