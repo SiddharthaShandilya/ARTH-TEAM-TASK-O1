@@ -1,5 +1,5 @@
 import os
-
+os.system("clear")
 os.system("tput setaf 3")
 
 print("\t\t\t\tWelcome welcome welcome\t\t\n\n")
