@@ -1,4 +1,5 @@
 import os
+import Docker_automation
 os.system("clear")
 os.system("tput setaf 3")
 
@@ -9,325 +10,62 @@ os.system("tput setaf 5")
 print("\n\n\t\t\t\tWelcome to my menu program")
 
 
-
-
-#--------------------------->>>>>>>>>>>>>>>> DOCKER <<<<--------------------------
-
-
-#     docker()  #<<<<<<<----------- call docker() to start the program  END OF THE LINE
-
-
-#--------->>>>>>>>>>>>>>>>>  options <<<<<<<<<---------------------
-
-
-dockerStart = 0   # <<<<----------this will tell us whether docker is started or not
-
-def option():
-    choice = input("\n\t Enter 1 to start the docker \n \t Enter 2 to stop the docker \n \t Enter 3 to know the Details of docker \n \t Enter 4 for Configuring Docker image \n \t Enter 5 for Hosting web server on docker \n \t Enter x to exit the docker \n \t\n\t\t--------->>>>>\t")
-#    ch = int(choice)
-    print("\n\n")
-    return choice
-
-def Rechoice():
-    reChoice = input("\n\tyou have exitted from the service Enter R to re-enter and E to exit")
-    if(reChoice == 'R' ):
-            service()
-    elif(reChoice == 'E'):
-            print("\n\tyou have choosen to withdraw \n \t\tHAPPY CODING")
-            
-    else:
-        print("\t\t\t !!!    EXITING !!!!!!!")
-        exit()
-        
-        
-#-------------------------->>>>>>>>>>>>>>    dockerHostWebServer()   <<<<<<--------------------
-
-def dockerHostWebServer():
-    print("\n\tYou have chosen option 5\n")
-    osName  = input("\n\tEnter the name of the os \t --->  ")
-    
-    os.system("docker start {}".format(osName))
-    os.system("docker ps --latest")
-    print("\n \n")
-#    print("\n\t\t -->>Enter [ctrl+d] to exit the command line<<---\n")
-  #  os.system()
-    print("\n The ip of the os is \t --->\t ")
-    var = os.system("docker container inspect --format \"{{.NetworkSettings.IPAddress}}\" {}".format(osName))
-    os.system("docker exec -it {} yum install httpd".format(osName))
- #   print("\n\t\twrite the codes for the server to deploy\n")
-  #  os.system("")
-    webFileName = input("\n\tEnter the name of the html file that needs to be launched\t--->\t")
-    os.system("docker cp {} {}:/var/www/html".format(webFileName,osName))
-    print("\n\t\t--->>>   LAUNCHING {} FILE ON  WEB SERVER on {}  <<<-----\t\n".format(webFileName,osName))
-    os.system("docker exec -it {} /usr/bin/httpd".format(osName))
-
-
-#----------->>>>>>>>>> SERVICE() <<<<<<<<-__----------------
-def service():
-        exitStatus = "dumycode"
-        print("\n\t \t Starting Docker \t\t\n")
-        os.system("systemctl start docker")
-        dockerStart = 1
-        ch = 1
-        while( exitStatus != "n"):
-            os.system("clear")
-            ch = option()
-            if(ch == "1"):
-                print("\n\t \t Starting Docker \t\t\n")
-                os.system("systemctl start docker")
-                dockerStart = 1
-                print("\n\tdocker is running")        
-            elif(ch == "2"):
-                print("\n\tstopping docker")
-                os.system("systemctl stop docker")
-                print("\n\tThe docker is stoped")
-                dockerStart = 0
-            elif(ch == "3"):
-                print("\n\t\tpresenting docker Details\n") 
-               # os.system("systemctl status docker")
-                showDockerDetails(dockerStart)   
-            elif(ch == "4"):
-
-                # ==========>>>>>>> here we will ask the user details about the image it wants to run
-                configDockerImage(dockerStart)
-            elif(ch == "5"):
-                dockerHostWebServer()
-            elif(ch == "x"):
-                print("\n\t\tYou have chosen To exit")
-                
-                print("\n !!!! \t\tt\t\t\t\ EXITING THE SYSTEM  \t\t\tt\t !!!!")
-                break
-            else:
-                print("You have entered wrong choice")
-            
-#            exitStatus = input("Enter y to Return to main menu \nEnter n  to exit [y/n] \n\t------>>\t")
-        
-
-        
-def configDockerImage(dockerStart):
-    print("\t\t\t Welcome to docker configuration \n")
-    if(dockerStart == 1):
-        x = input("\n\t\tEnter 1 to run an image\n\t\tEnter 2 to pull an image\n\t\tEnter 3 to delete an image\n\t\tEnter X to exit\n\t\t----->>")
-        if(x == "1"):
-            print("\n\tyou have chosen option for Running Image \n")
-            dockerRunImage(dockerStart)
-        elif(x == "2"):
-            dockerRunImage(dockerStart)
-            print("\n\tyou have chosen option for Pulling Image \n")
-            dockerPullImage(dockerStart)
-        elif(x == "3"):
-            print("\n\tyou have chosen option for deleting an Image \n")
-            deleteDockerImage()
-        else:
-            choice = input("\n\tPress E to exit and C to continue\n")
-            if(choice == "E"):
-                print("\n\t\tReturning to main menu\n")
-                return
-    
-    else:
-        print("\n\tUnable to perofrm action , Docker is closed\n")
-        print("\t \t Starting Docker \t\t\n")
-        os.system("systemctl start docker")
-        dockerStart = 1
-        
-        
-# --------------------->>>>>>>>> showDockerDetails()<<<<<<<<<<<<____
-def showDockerDetails(dockerStart):
-    con = "Y"
-    while(dockerStart != 1):
-        print("\n\tUnable to perofrm action , Docker is closed\n")
-        print("\n\t\t Starting Docker \t\t\n")
-        os.system("systemctl start docker")
-        dockerStart = 1 
-        
-    while(con !="E"):
-        print("\n \t\t\t Below are the option")
-        os.system("docker ps --help")
-        option = input("\n\n\t Enter details \t--->>\t")
-        os.system("docker ps {}".format(option))
-        con = input("\n\n\t\tEnter Y to return to option 3\n \t\tEnter E to go to Docker menu\n\t\t--------->>>>" )
-        
-    print("\n \t\t\t Exiting option Docker Details\n ")
-    
-# ==================>>>>>>>>Here we will ask the user details about the image it wants to pull
-
-def dockerRunImage(dockerStart):  
-    if(dockerStart == 1):
-        
-        os.system("docker ps -a")
-        
-        imgPull = input("\n\nEnter the name of the image you want to run\t -------> \t")
-        os.system("docker search {}".format(imgPull))
-        imgChoicePull = input("\nEnter the version of the image you want to run\t ---->> \t")
-        choiceDesiredName = input("\n\tDo you want to give a name to your image [y/n]\t -------->>\t")
-        
-        if(choiceDesiredName == "y"):
-            print("\n\tRunning Docker image\t---->> {}".format(imgChoicePull))
-            configImageName(imgChoicePull)     
-        
-        else:
-            print("\nENTER  -->>>  exit  <<----- to exit the image or press [ctrl+c] to exit")
-            os.system("docker run -i -t {}".format(imgChoicePull)) 
-        print("\n\t!!!!\tEXITING\t!!!!!!\n")
-    
-    else:
-        print("\n\t\t The docker has stooped\n")
-        
-# --------------------->>>>>>>>>>       configImageName() <<<<<<<<<<<<<------------------------
-        
-def configImageName(imgChoicePull):
-    desiredImageName = input("\n\tEnter the name \t\n \t------>  ")
-    os.system("docker run -it --name {} {}".format(desiredImageName,imgChoicePull))
-           
-#-------------------------->>>>>>>>>>>>>>    deleteAllPullImage()   <<<<<<--------------------
-
-def dockerPullImage(dockerStart):        
-    if(dockerStart == 1):
-        imgStart = input("\n\tEnter the name of the image you want to Pull\t ------>\t")
-        os.system("docker search {}".format(imgStart))
-        imgChoicePull = input("\n\tEnter the version of the image you want to Pull\t ---->> \t")
-        print("\n \t\t\t\t !!!! PULLING IMAGE {} !!!!\n".format(imgChoicePull))
-        os.system("docker pull {}".format(imgChoicePull)) 
-    else:
-        print("\n\tThe docker has stooped")
-    return    
-    
-
-
-        #-------------------------->>>>>>>>>>>>>>    deleteDockerImage()   <<<<<<--------------------
-
-        
-def deleteDockerImage():
-   # deleteImageName = ""
-    chooseExit = "c"
-    while(chooseExit == "c" ):
-        os.system("clear")
-        print("\n\tBelow are the available images\n")
-        os.system("docker ps -a")
-        deleteDockerImageChoice = input(" ENTER 1 to delete a single images \n ENTER 2 to delete all running images \n ENTER 3 to delete all the docker images\n ")
-
-        if(deleteDockerImageChoice =="3"):
-            deleteAllFlag = 1
-            print("\n\tDeleting all docker Image\n")
-            deleteAllDockerImage()
-            
-        elif(deleteDockerImageChoice == "1"):
-            print("\n\tDeleting single IMAGE\n")
-            deleteDockerImageChoiceFunction()
-            
-        elif(deleteDockerImageChoice == "2"):
-            deleteAllRunningDockerImage()
-            
-        else:
-            print("\n\t\t WRONG OPTION\n")
-        chooseExit = input("\n\tENTER c to continue\n\tENTER e to exit\n")
-        if(chooseExit == "e"):
-            return
-# 💥 here I'm having trouble exiting the code if wrong ImageName is given          
-    
-    print("\n\tYou have entered wrong option ")
-    choice = input("Enter C to continue and E to exit\t------------>\t")
-    if(choice != "c" and deleteAllFlag == 1):
-        print("\n\tALL IMAGES ARE DELETED\n\t")
-        return
-    else:
-        configDockerImage(dockerStart)
-# ------------------>>>>>>deleteAllDockerImage()<<<_------------------
-def deleteAllDockerImage():
-    print("\n\tDeleting all docker Images")
-    os.system("docker rm `docker ps -a -q`")       
-    
-    #-------------------------->>>>>>>>>>>>>>    deleteDockerImage()   <<<<<<--------------------
-
-    
-def deleteDockerImageChoiceFunction():
-    imageName = input("\n\tEnter the name of the image you want to remove")
-    print("\n\t\t\t REMOVING {}\n".format(imageName))
-    os.system("docker rm {}".format(imageName))
-    
-#-------------------------->>>>>>>>>>>>>>    deleteAllDockerImage()   <<<<<<--------------------
-def deleteAllDockerImage():
-    print("\n\tDeleting all docker Images")
-    os.system("docker rm `docker ps -a -q`")            
-
-#-------------------------->>>>>>>>>>>>>>    deleteAllRunningDockerImage()   <<<<<<--------------------
-
-def deleteAllRunningDockerImage():
-    print("\n\tDeleting all running images")
-    os.system("docker rm `docker ps -q`")
-
-
-
-#-------------------------->>>>>>>>>>>>>>    docker()   <<<<<<--------------------
-
-def docker():
-    os.system("clear")
-    print("\n\t Welcome to dockers below are the list of options to use docker \t!!")
-    
-    service()
-    Rechoice()
- 
-# ---------------->>>>>>>>>>>>>>>>>>   Here only by calling docker function the whole program will run
-
-
-#docker()  #<<<<<<<----------- call docker() to start the program
-
-
-
-
-#------------->>        CREATING A PARTITION       <<--------
+# ------------->>        CREATING A PARTITION       <<--------
 
 def create_partition():
-        print("\t\t YOU HAVE CHOSEN DISK PARTITION OPTION \n\n")
-        d=input("Enter the Disk Name: ")
-        ps=input("Enter the Partition Size: ")
-        i="(echo 'n' ; echo 'p' ; echo -ne '\n' ; echo -ne '\n' ; echo '+'+ps+'G';) | fdisk /dev/"+d
-        os.system(i)
-        os.system("udevadm settle")
-        os.system("lsblk")
+    print("\t\t YOU HAVE CHOSEN DISK PARTITION OPTION \n\n")
+    d = input("Enter the Disk Name: ")
+    ps = input("Enter the Partition Size: ")
+    i = "(echo 'n' ; echo 'p' ; echo -ne '\n' ; echo -ne '\n' ; echo '+'+ps+'G';) | fdisk /dev/"+d
+    os.system(i)
+    os.system("udevadm settle")
+    os.system("lsblk")
 
-#-------------->>         formatting a disk        <<-------
+# -------------->>         formatting a disk        <<-------
+
 
 def format_disk():
-        d=input("Enter disk name")
-        os.system("mkfs.ext4 /dev/"+d)
+    d = input("Enter disk name")
+    os.system("mkfs.ext4 /dev/"+d)
 
-#------------->>   To mount a disk                 <<-------
+# ------------->>   To mount a disk                 <<-------
+
 
 def mount_disk():
-        f=input("Enter disk name: ")
-        p=input("Enter a participation name(example drive3): ")
-        os.system("mkdir /"+p)
-        os.system("lsblk")
-        os.system("mount /dev/"+f + " " +"/"+p)
-        os.system("cd /"+p)
-        os.system("lsblk")
+    f = input("Enter disk name: ")
+    p = input("Enter a participation name(example drive3): ")
+    os.system("mkdir /"+p)
+    os.system("lsblk")
+    os.system("mount /dev/"+f + " " + "/"+p)
+    os.system("cd /"+p)
+    os.system("lsblk")
 
 
-#-------------->>         formatting a disk        <<-------
+# -------------->>         formatting a disk        <<-------
 
 def format_disk():
-        d=input("Enter disk name")
-        os.system("mkfs.ext4 /dev/"+d)
+    d = input("Enter disk name")
+    os.system("mkfs.ext4 /dev/"+d)
 
-#------------->>   To mount a disk                 <<-------
+# ------------->>   To mount a disk                 <<-------
+
 
 def mount_disk():
-        f=input("Enter disk name: ")
-        p=input("Enter a participation name(example drive3): ")
-        os.system("mkdir /"+p)
-        os.system("lsblk")
-        os.system("mount /dev/"+f + " " +"/"+p)
-        os.system("cd /"+p)
-        os.system("lsblk")
+    f = input("Enter disk name: ")
+    p = input("Enter a participation name(example drive3): ")
+    os.system("mkdir /"+p)
+    os.system("lsblk")
+    os.system("mount /dev/"+f + " " + "/"+p)
+    os.system("cd /"+p)
+    os.system("lsblk")
 
 
-#------------->>   To configure yum                <<-------
+# ------------->>   To configure yum                <<-------
 
 def configure_yum():
-        os.system("cd /etc/yum.repos.d")
-        f1=open("yum1.repo","w")
-        f1.write('''
+    os.system("cd /etc/yum.repos.d")
+    f1 = open("yum1.repo", "w")
+    f1.write('''
 [dvd1]
 baseurl=/run/media/root/RHEL-8-0-0-BaseOS-x86_64/AppStream
 gpgcheck=0
@@ -335,64 +73,61 @@ gpgcheck=0
 [dvd2]
 baseurl=/run/media/root/RHEL-8-0-0-BaseOS-x86_64/BaseOS
 gpgcheck=0''')
-        f1.close()
-        loc=input("Enter the director name where your menu Program is save (/arth/menu.py: ")
-        os.system("cp "+loc+"/yum1.repo /etc/yum.repos.d")
-        os.system("dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y")
+    f1.close()
+    loc = input(
+        "Enter the director name where your menu Program is save (/arth/menu.py: ")
+    os.system("cp "+loc+"/yum1.repo /etc/yum.repos.d")
+    os.system(
+        "dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm -y")
 
 
-
-#------------->>   To configure apache web server  <<-------
+# ------------->>   To configure apache web server  <<-------
 
 def configure_appache_web_server():
-        os.system("dnf install httpd -y")
-        os.system("systemctl enable httpd")
+    os.system("dnf install httpd -y")
+    os.system("systemctl enable httpd")
 
 
-
-
-#------------->>   To create a Lvm Storage         <<-------
-
+# ------------->>   To create a Lvm Storage         <<-------
 
 
 def create_lvm_storage():
-        d1=input("Enter first disk name: ")
-        d2=input("Enter second disk name: ")
-        v=input("Enter the name of the volume group: ")
-        n=input("Enter the name of the LVM: ")
-        s=input("Enter the size of the LVM: ")
-        dr=input("Input the LVM mountpoint name i.e Create a Directory: ")
-        #pv creation
-        os.system("pvcreate /dev/"+d1)
-        os.system("pvcreate /dev/"+d2)
-        #vg creation
-        os.system("vgcreate "+v+" /dev/"+d1+" /dev/"+d2)
-        os.system("vgdisplay "+v)
-        #lvm creation
-        os.system("lvcreate --size +"+s+"G --name "+n+" "+v)
-        #formatting
-        os.system("mkfs.ext4 /dev/"+v+"/"+n)
-        #mounting
-        os.system("mkdir /"+dr)
-        os.system("mount /dev/"+v+"/"+n+" "+"/"+dr)
-        os.system("cd /"+dr)
+    d1 = input("Enter first disk name: ")
+    d2 = input("Enter second disk name: ")
+    v = input("Enter the name of the volume group: ")
+    n = input("Enter the name of the LVM: ")
+    s = input("Enter the size of the LVM: ")
+    dr = input("Input the LVM mountpoint name i.e Create a Directory: ")
+    # pv creation
+    os.system("pvcreate /dev/"+d1)
+    os.system("pvcreate /dev/"+d2)
+    # vg creation
+    os.system("vgcreate "+v+" /dev/"+d1+" /dev/"+d2)
+    os.system("vgdisplay "+v)
+    # lvm creation
+    os.system("lvcreate --size +"+s+"G --name "+n+" "+v)
+    # formatting
+    os.system("mkfs.ext4 /dev/"+v+"/"+n)
+    # mounting
+    os.system("mkdir /"+dr)
+    os.system("mount /dev/"+v+"/"+n+" "+"/"+dr)
+    os.system("cd /"+dr)
 
 
-
-#------------->>   To create a namenode on hadoop  <<-------
+# ------------->>   To create a namenode on hadoop  <<-------
 
 
 def create_namenode_hadoop():
-        os.system("hadoop namenode -format")
-        os.system("cd /etc/hadoop")
-        os.system("rm -rf hdfs-site.xml")
-        os.system("rm -rf core-site.xml")
-        ipm=input("Input master IP: ")
-        dir2=input("Name your directory you want to create and use: ")
-        os.system("mkdir /"+dir2)
-        os.system("cd /etc/hadoop")
-        f2=open("/etc/hadoop/hdfs-site.xml","w")
-        f2.write('''
+    os.system("hadoop namenode -format")
+    os.system("cd /etc/hadoop")
+    os.system("rm -rf hdfs-site.xml")
+    os.system("rm -rf core-site.xml")
+    ipm = input("Input master IP: ")
+    dir2 = input("Name your directory you want to create and use: ")
+    os.system("mkdir /"+dir2)
+    os.system("cd /etc/hadoop")
+    f2 = open("/etc/hadoop/hdfs-site.xml", "w")
+    f2.write('''
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
@@ -403,11 +138,11 @@ def create_namenode_hadoop():
 <value>/{}</value>
 </property>
 </configuration>'''.format(dir2))
-        f2.close()
-        os.system("systemctl disable firewalld")
-        os.system("systemctl stop firewalld")
-        f3=open("/etc/hadoop/core-site.xml","w")
-        f3.write("""
+    f2.close()
+    os.system("systemctl disable firewalld")
+    os.system("systemctl stop firewalld")
+    f3 = open("/etc/hadoop/core-site.xml", "w")
+    f3.write("""
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
@@ -420,22 +155,21 @@ def create_namenode_hadoop():
 
 </property>
 </configuration>""".format(ipm))
-        f3.close()
-        os.system("hadoop-daemon.sh start namenode")
+    f3.close()
+    os.system("hadoop-daemon.sh start namenode")
 
 
-
-#------------->>   To create a datanode on hadoop  <<-------
+# ------------->>   To create a datanode on hadoop  <<-------
 
 def create_datanode_hadoop():
-        os.system("cd /etc/hadoop")
-        os.system("rm -rf hdfs-site.xml")
-        os.system("rm -rf core-site.xml")
-        dir2=input("Name your directory you want to create and use: ")
-        os.system("mkdir /"+dir2)
-        ipm=input("Please enter the Ip of master You want to connect with: ")
-        f4=open("/etc/hadoop/hdfs-site.xml","w")
-        f4.write('''
+    os.system("cd /etc/hadoop")
+    os.system("rm -rf hdfs-site.xml")
+    os.system("rm -rf core-site.xml")
+    dir2 = input("Name your directory you want to create and use: ")
+    os.system("mkdir /"+dir2)
+    ipm = input("Please enter the Ip of master You want to connect with: ")
+    f4 = open("/etc/hadoop/hdfs-site.xml", "w")
+    f4.write('''
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
@@ -446,9 +180,9 @@ def create_datanode_hadoop():
 <value>/{}</value>
 </property>
 </configuration>'''.format(dir2))
-        f4.close()
-        f5=open("/etc/hadoop/core-site.xml","w")
-        f5.write("""
+    f4.close()
+    f5 = open("/etc/hadoop/core-site.xml", "w")
+    f5.write("""
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
@@ -461,22 +195,20 @@ def create_datanode_hadoop():
 
 </property>
 </configuration>""".format(ipm))
-        f5.close()
-        os.system("systemctl disable firewalld")
-        os.system("systemctl stop firewalld")
-        os.system("hadoop-daemon.sh start datanode")
+    f5.close()
+    os.system("systemctl disable firewalld")
+    os.system("systemctl stop firewalld")
+    os.system("hadoop-daemon.sh start datanode")
 
 
-
-
-#------------->>   To create a client on hadoop    <<-------
+# ------------->>   To create a client on hadoop    <<-------
 
 def create_hadoop_client():
-        os.system("systemctl stop firewalld")
-        os.system("systemctl disable firewalld")
-        ipm=input("Please enter the Ip of master You want to connect with: ")
-        f5=open("/etc/hadoop/core-site.xml","w")
-        f5.write('''
+    os.system("systemctl stop firewalld")
+    os.system("systemctl disable firewalld")
+    ipm = input("Please enter the Ip of master You want to connect with: ")
+    f5 = open("/etc/hadoop/core-site.xml", "w")
+    f5.write('''
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
@@ -489,28 +221,25 @@ def create_hadoop_client():
 
 </property>
 </configuration>'''.format(ipm))
-        f5.close()
+    f5.close()
 
 
-#------------->>   To Install Hadoop on the system <<-------
+# ------------->>   To Install Hadoop on the system <<-------
 
 def install_hadoop():
-        pre=input("Do you have the hadoop rpm downloaded already?(y/n): ")
-        if(pre=="n"):
-            print("Can't he;p you directly")
-        else:
-            y=input("Input the full-directory where rpm is downloaded/saved")
-            os.system(y)
-            os.system("yum install -y java-1.8.0-openjdk")
-            os.system("rpm -ivh hadoop-1.2.1-1.x86_64 --force")
+    pre = input("Do you have the hadoop rpm downloaded already?(y/n): ")
+    if(pre == "n"):
+        print("Can't he;p you directly")
+    else:
+        y = input("Input the full-directory where rpm is downloaded/saved")
+        os.system(y)
+        os.system("yum install -y java-1.8.0-openjdk")
+        os.system("rpm -ivh hadoop-1.2.1-1.x86_64 --force")
 
 
-
-
-
-#------------------->> MENU PART <<------------
+# ------------------->> MENU PART <<------------
 def menu():
-        m="""
+    m = """
 Press 1: To create a partition
 Press 2: To format the disk
 Press 3: To mount the disk
@@ -524,71 +253,66 @@ press10: To Install Hadoop on the system
 press11: To exit from the Menu Program
 press12: For configring Docker
 """
-        print(m)
+    print(m)
 
-        ch=int(input("Input Your Choice: "))
-        if ch==1:
-                create_partition()
+    ch = int(input("Input Your Choice: "))
+    if ch == 1:
+        create_partition()
 
-        elif(ch ==2):
-                format_disk()
+    elif(ch == 2):
+        format_disk()
 
-        elif(ch==3):
-                mount_disk()
+    elif(ch == 3):
+        mount_disk()
 
-        elif(ch==4):
-                configure_yum()
+    elif(ch == 4):
+        configure_yum()
 
-        elif(ch==5):
-                configure_appache_web_server()
+    elif(ch == 5):
+        configure_appache_web_server()
 
-        elif(ch==6):
-                create_lvm_storage()
+    elif(ch == 6):
+        create_lvm_storage()
 
-        elif(ch==7):
-                create_namenode_hadoop()
+    elif(ch == 7):
+        create_namenode_hadoop()
 
+    elif(ch == 8):
+        create_datanode_hadoop()
 
-        elif(ch==8):
-                create_datanode_hadoop()
+    elif(ch == 9):
+        create_hadoop_client()
 
-        elif(ch==9):
-                create_hadoop_client()
+    elif(ch == 10):
+        install_hadoop()
 
-        elif(ch==10):
-                install_hadoop()
+    elif(ch == 11):
+        print("\n\t\t EXITING ...\t\t\n")
+        exit()
+    elif(ch == 12):
+        da = Docker_automation
+        da.docker()
+    else:
+        print("\n\t\tYOU HAVE ENTERED WRONG OPTION \n")
 
-        elif(ch==11):
-                print("\n\t\t EXITING ...\t\t\n")
-                exit()
-        elif(ch==12):
-               docker()
-        else:
-            print("\n\t\tYOU HAVE ENTERED WRONG OPTION \n")
-
-#the program need to re-run everytime a task is completed need to put the tasks in a infinite loop
+# the program need to re-run everytime a task is completed need to put the tasks in a infinite loop
 
 # need to clear the screen before displaying the message as it looks more tidy
 
+
 print("Do you want to run? Local/Remote")
 
-ch2=input("l-local and r-remote: ")
+ch2 = input("l-local and r-remote: ")
 
-if ch2== 'l':
+if ch2 == 'l':
 
-        menu()
+    menu()
 #  does not work for aws as it requires passkey <<-- needs to be taken care of
 
 
-elif(ch2=='r'):
-    imp3=input("Enter the target's IP: ")
+elif(ch2 == 'r'):
+    imp3 = input("Enter the target's IP: ")
 
     os.system("scp /root/arth_projects/menu1.py "+imp3+":/root")
 
     os.system("(echo 'l' ; echo &ch) | ssh "+imp3+" python3 menu1.py")
-
-
-
-
-
-
